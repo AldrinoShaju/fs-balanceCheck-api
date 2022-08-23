@@ -3,16 +3,16 @@ package com.familyshop.microservice.balancecheck.bean;
 public class PaymentStatus {
     private String id;
     private Integer amount;
-    private Boolean isPaid;
+    private Boolean paid;
     private Integer remaining;
 
     public PaymentStatus() {
     }
 
-    public PaymentStatus(String id, Integer amount, Boolean isPaid, Integer remaining) {
+    public PaymentStatus(String id, Integer amount, Boolean Paid, Integer remaining) {
         this.id = id;
         this.amount = amount;
-        this.isPaid = isPaid;
+        this.paid = Paid;
         this.remaining = remaining;
     }
 
@@ -33,11 +33,11 @@ public class PaymentStatus {
     }
 
     public Boolean getPaid() {
-        return isPaid;
+        return paid;
     }
 
     public void setPaid(Boolean paid) {
-        isPaid = paid;
+        this.paid = paid;
     }
 
     public Integer getRemaining() {
@@ -53,7 +53,7 @@ public class PaymentStatus {
         return "PaymentStatusDTO{" +
                 "id='" + id + '\'' +
                 ", amount=" + amount +
-                ", isPaid=" + isPaid +
+                ", isPaid=" + paid +
                 ", remaining=" + remaining +
                 '}';
     }

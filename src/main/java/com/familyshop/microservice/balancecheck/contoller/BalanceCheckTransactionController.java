@@ -20,4 +20,11 @@ public class BalanceCheckTransactionController {
         return new ResponseEntity("Transaction Added", HttpStatus.OK);
     }
 
+    @PutMapping("/edit_transaction")
+    public ResponseEntity editExisitingtTransaction(@RequestParam("id") String id, @RequestBody TransactionRequest updatedTrans,
+                                                    @RequestParam("txnId") String txnId){
+        transactionService.updatedExistingPaymentDetails(id, txnId, updatedTrans);
+        return new ResponseEntity("Transaction Updated", HttpStatus.OK);
+    }
+
 }

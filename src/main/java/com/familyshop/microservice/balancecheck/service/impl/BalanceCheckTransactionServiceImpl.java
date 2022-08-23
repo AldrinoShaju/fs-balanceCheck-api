@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class BalanceCheckTransactionServiceImpl implements BalanceCheckTransactionService {
@@ -37,6 +39,31 @@ public class BalanceCheckTransactionServiceImpl implements BalanceCheckTransacti
         paymentStatus.setRemaining(Integer.valueOf(tranReq.getRemaining()));
 
         currentCustomer.get().getPaymentStatusList().add(paymentStatus);
+
+        repository.save(currentCustomer.get());
+    }
+
+    @Override
+    public void updatedExistingPaymentDetails(String custID, String transID, TransactionRequest tranReq) {
+        Optional<CustomerDTO> currentCustomer = repository.findById(custID);
+
+        if(null==currentCustomer.get().getPaymentStatusList()){
+            return;
+        }
+
+        List<PaymentStatus> updatedList = currentCustomer.get().getPaymentStatusList();
+
+        updatedList = updatedList.stream().filter(item->!item.getId().equals(transID)).collect(Collectors.toList());
+
+        PaymentStatus paymentStatus = new PaymentStatus();
+        paymentStatus.setAmount(Integer.valueOf(tranReq.getAmount()));
+        paymentStatus.setId(transID);
+        paymentStatus.setPaid(tranReq.getPaid());
+        paymentStatus.setRemaining(Integer.valueOf(tranReq.getRemaining()));
+
+        updatedList.add(paymentStatus);
+
+        currentCustomer.get().setPaymentStatusList(updatedList);
 
         repository.save(currentCustomer.get());
     }

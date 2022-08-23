@@ -1,11 +1,15 @@
 package com.familyshop.microservice.balancecheck.bean;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class TransactionRequest {
 
     private String id;
     private String transactionDateTime;
     private String amount;
-    private boolean isPaid;
+
+    @JsonProperty("isPaid")
+    private boolean paid;
     private String remaining;
     private String lastUpdateTimeStamp;
 
@@ -34,11 +38,11 @@ public class TransactionRequest {
     }
 
     public Boolean getPaid() {
-        return isPaid;
+        return paid;
     }
 
     public void setPaid(Boolean paid) {
-        isPaid = paid;
+        this.paid = paid;
     }
 
     public String getRemaining() {
@@ -63,7 +67,7 @@ public class TransactionRequest {
                 "id='" + id + '\'' +
                 ", transactionDateTime='" + transactionDateTime + '\'' +
                 ", amount='" + amount + '\'' +
-                ", isPaid=" + isPaid +
+                ", isPaid=" + paid +
                 ", remaining='" + remaining + '\'' +
                 ", lastUpdateTimeStamp='" + lastUpdateTimeStamp + '\'' +
                 '}';
