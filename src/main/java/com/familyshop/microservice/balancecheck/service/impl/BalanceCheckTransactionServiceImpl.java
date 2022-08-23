@@ -60,6 +60,7 @@ public class BalanceCheckTransactionServiceImpl implements BalanceCheckTransacti
         paymentStatus.setId(transID);
         paymentStatus.setPaid(tranReq.getPaid());
         paymentStatus.setRemaining(Integer.valueOf(tranReq.getRemaining()));
+        paymentStatus.setDisableTxn(tranReq.isDisableTxn());
 
         updatedList.add(paymentStatus);
 

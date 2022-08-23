@@ -7,11 +7,13 @@ public class TransactionRequest {
     private String id;
     private String transactionDateTime;
     private String amount;
-
     @JsonProperty("isPaid")
     private boolean paid;
     private String remaining;
     private String lastUpdateTimeStamp;
+
+    @JsonProperty("isDisableTxn")
+    private boolean disableTxn;
 
     public String getId() {
         return id;
@@ -61,15 +63,24 @@ public class TransactionRequest {
         this.lastUpdateTimeStamp = lastUpdateTimeStamp;
     }
 
+    public boolean isDisableTxn() {
+        return disableTxn;
+    }
+
+    public void setDisableTxn(boolean disableTxn) {
+        this.disableTxn = disableTxn;
+    }
+
     @Override
     public String toString() {
         return "TransactionRequest{" +
                 "id='" + id + '\'' +
                 ", transactionDateTime='" + transactionDateTime + '\'' +
                 ", amount='" + amount + '\'' +
-                ", isPaid=" + paid +
+                ", paid=" + paid +
                 ", remaining='" + remaining + '\'' +
                 ", lastUpdateTimeStamp='" + lastUpdateTimeStamp + '\'' +
+                ", disableTxn=" + disableTxn +
                 '}';
     }
 }

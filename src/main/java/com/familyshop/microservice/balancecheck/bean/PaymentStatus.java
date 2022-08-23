@@ -6,6 +6,8 @@ public class PaymentStatus {
     private Boolean paid;
     private Integer remaining;
 
+    private boolean disableTxn;
+
     public PaymentStatus() {
     }
 
@@ -48,13 +50,22 @@ public class PaymentStatus {
         this.remaining = remaining;
     }
 
+    public boolean isDisableTxn() {
+        return disableTxn;
+    }
+
+    public void setDisableTxn(boolean disableTxn) {
+        this.disableTxn = disableTxn;
+    }
+
     @Override
     public String toString() {
-        return "PaymentStatusDTO{" +
+        return "PaymentStatus{" +
                 "id='" + id + '\'' +
                 ", amount=" + amount +
-                ", isPaid=" + paid +
+                ", paid=" + paid +
                 ", remaining=" + remaining +
+                ", disableTxn=" + disableTxn +
                 '}';
     }
 }
