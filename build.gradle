@@ -1,0 +1,32 @@
+plugins {
+	id 'org.springframework.boot' version '2.7.3'
+	id 'io.spring.dependency-management' version '1.0.13.RELEASE'
+	id 'java'
+}
+
+group = 'com.familyshop.microservice'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '17'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb:2.7.3'
+	implementation 'org.springframework.data:spring-data-mongodb:3.4.2'
+
+	testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.4.8'
+
+
+
+	compileOnly 'org.projectlombok:lombok:1.18.24'
+
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
