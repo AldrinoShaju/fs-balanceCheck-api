@@ -61,13 +61,7 @@ public class TransactionRequest {
         this.txnTimeStamp = txnTimeStamp;
     }
 
-    public boolean isPaid() {
-        return paid;
-    }
 
-    public void setPaid(boolean paid) {
-        this.paid = paid;
-    }
 
     public String getLastUpdateTxnTimeStamp() {
         return lastUpdateTxnTimeStamp;

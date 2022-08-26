@@ -9,6 +9,8 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
+import static com.familyshop.microservice.balancecheck.util.BalanceCheckUtil.getCurrentTimeStamp;
+
 public class CustomerTransformation {
 
     public static Customer transformCustomerToDTO(CustomerRequest newCustomer){
@@ -31,11 +33,6 @@ public class CustomerTransformation {
         return cust;
     }
 
-    private static String getCurrentTimeStamp(){
-        ZonedDateTime date = ZonedDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
-        String text = date.format(formatter);
-        return text;
-    }
+
 
 }

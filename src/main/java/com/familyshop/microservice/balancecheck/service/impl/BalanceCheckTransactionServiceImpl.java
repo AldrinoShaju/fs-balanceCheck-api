@@ -1,19 +1,18 @@
 package com.familyshop.microservice.balancecheck.service.impl;
 
-import com.familyshop.microservice.balancecheck.bean.Customer;
-import com.familyshop.microservice.balancecheck.bean.PaymentStatus;
 import com.familyshop.microservice.balancecheck.bean.TransactionRequest;
-import com.familyshop.microservice.balancecheck.dto.CustomerDTO;
+import com.familyshop.microservice.balancecheck.bean.Customer;
+import com.familyshop.microservice.balancecheck.bean.UpdateTransactionRequest;
 import com.familyshop.microservice.balancecheck.repository.BalanceCheckRepository;
 import com.familyshop.microservice.balancecheck.service.BalanceCheckCustomerService;
 import com.familyshop.microservice.balancecheck.service.BalanceCheckTransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+
+import static com.familyshop.microservice.balancecheck.datatranslator.TransactionTransformer.transformTxntoDTO;
+import static com.familyshop.microservice.balancecheck.util.BalanceCheckUtil.getCurrentTimeStamp;
 
 @Service
 public class BalanceCheckTransactionServiceImpl implements BalanceCheckTransactionService {
@@ -25,47 +24,69 @@ public class BalanceCheckTransactionServiceImpl implements BalanceCheckTransacti
     BalanceCheckCustomerService customerService;
 
     @Override
-    public void insertPaymentDetails(String id, TransactionRequest tranReq) {
-        Optional<CustomerDTO> currentCustomer = repository.findById(id);
+    public void insertPaymentDetails(String custId, TransactionRequest txnReq) {
+        Customer currentCust = new Customer();
 
-        if(null==currentCustomer.get().getPaymentStatusList()){
-            currentCustomer.get().setPaymentStatusList(new ArrayList<PaymentStatus>());
+        try{
+            currentCust = customerService.getUserPaymentDetails(custId);
+        }catch (Exception e){
+            throw e;
         }
 
-        PaymentStatus paymentStatus = new PaymentStatus();
-        paymentStatus.setAmount(Integer.valueOf(tranReq.getAmount()));
-        paymentStatus.setId(tranReq.getId());
-        paymentStatus.setPaid(tranReq.getPaid());
-        paymentStatus.setRemaining(Integer.valueOf(tranReq.getRemaining()));
+        TransactionRequest txnDTO = transformTxntoDTO(txnReq);
 
-        currentCustomer.get().getPaymentStatusList().add(paymentStatus);
+        currentCust.getPaymentStatusList().add(txnDTO);
 
-        repository.save(currentCustomer.get());
+
+        int remainingAmount = currentCust.getTotalRemaining();
+        currentCust.setTotalRemaining(remainingAmount + txnReq.getRemaining());
+
+        if(currentCust.getTotalRemaining()!=0){
+            currentCust.setAllPaid(false);
+        }
+
+        repository.save(currentCust);
     }
 
-    @Override
-    public void updatedExistingPaymentDetails(String custID, String transID, TransactionRequest tranReq) {
-        Optional<CustomerDTO> currentCustomer = repository.findById(custID);
 
-        if(null==currentCustomer.get().getPaymentStatusList()){
+    @Override
+    public void updatedExistingPaymentDetails(String custId, String txnId, UpdateTransactionRequest updateTxnReq) {
+
+        Customer currentCust = new Customer();
+
+        try{
+            currentCust = customerService.getUserPaymentDetails(custId);
+        }catch (Exception e){
+            throw e;
+        }
+
+        if(null==currentCust.getPaymentStatusList()){
             return;
         }
 
-        List<PaymentStatus> updatedList = currentCustomer.get().getPaymentStatusList();
+        List<TransactionRequest> updatedList = currentCust.getPaymentStatusList();
 
-        updatedList = updatedList.stream().filter(item->!item.getId().equals(transID)).collect(Collectors.toList());
+        for(TransactionRequest txnDTO: updatedList){
+            if(txnDTO.getId().equals(txnId)){
+                txnDTO.setRemaining(txnDTO.getRemaining() - updateTxnReq.getPayedAmount());
+                txnDTO.setDisableTxn(updateTxnReq.isDisableTxn());
+                txnDTO.setNote(updateTxnReq.getNote());
+                txnDTO.setLastUpdateTxnTimeStamp(getCurrentTimeStamp());
+                if(txnDTO.getRemaining()==0){
+                    txnDTO.setPaid(true);
+                }
+            }
+        }
 
-        PaymentStatus paymentStatus = new PaymentStatus();
-        paymentStatus.setAmount(Integer.valueOf(tranReq.getAmount()));
-        paymentStatus.setId(transID);
-        paymentStatus.setPaid(tranReq.getPaid());
-        paymentStatus.setRemaining(Integer.valueOf(tranReq.getRemaining()));
-        paymentStatus.setDisableTxn(tranReq.isDisableTxn());
+        currentCust.setPaymentStatusList(updatedList);
 
-        updatedList.add(paymentStatus);
+        int remainingAmount = currentCust.getTotalRemaining();
+        currentCust.setTotalRemaining(remainingAmount - updateTxnReq.getPayedAmount());
 
-        currentCustomer.get().setPaymentStatusList(updatedList);
+        if(currentCust.getTotalRemaining() == 0){
+            currentCust.setAllPaid(true);
+        }
 
-        repository.save(currentCustomer.get());
+        repository.save(currentCust);
     }
 }
