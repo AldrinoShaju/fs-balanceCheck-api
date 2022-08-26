@@ -1,18 +1,18 @@
 package com.familyshop.microservice.balancecheck.service;
 
 import com.familyshop.microservice.balancecheck.bean.Customer;
-import com.familyshop.microservice.balancecheck.dto.CustomerDTO;
+import com.familyshop.microservice.balancecheck.bean.CustomerRequest;
 
 import java.util.List;
 
 public interface BalanceCheckCustomerService {
     public Customer getUserPaymentDetails(String id);
 
-    public void insertNewCustomer(Customer newCustomer);
+    public void insertNewCustomer(CustomerRequest newCustomer);
 
-    public List<CustomerDTO> fetchAllCustomers();
+    public List<Customer> fetchAllCustomers();
 
-    public boolean deleteCustomerFromDB(String custId);
+    public void deleteCustomerFromDB(String custId);
 
-    public void updateCustomerDetails(String custId, Customer updateCustomer);
+    public void updateCustomerDetails(String custId, CustomerRequest updateCustomer);
 }

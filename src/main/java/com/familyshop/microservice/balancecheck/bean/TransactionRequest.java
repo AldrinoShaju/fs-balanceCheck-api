@@ -1,19 +1,17 @@
 package com.familyshop.microservice.balancecheck.bean;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class TransactionRequest {
-
     private String id;
-    private String transactionDateTime;
-    private String amount;
-    @JsonProperty("isPaid")
+    private String txnTimeStamp;
+    private Integer amount;
     private boolean paid;
-    private String remaining;
-    private String lastUpdateTimeStamp;
+    private Integer remaining;
 
-    @JsonProperty("isDisableTxn")
     private boolean disableTxn;
+
+    private String note;
+
+    private String lastUpdateTxnTimeStamp;
 
     public String getId() {
         return id;
@@ -23,19 +21,11 @@ public class TransactionRequest {
         this.id = id;
     }
 
-    public String getTransactionDateTime() {
-        return transactionDateTime;
-    }
-
-    public void setTransactionDateTime(String transactionDateTime) {
-        this.transactionDateTime = transactionDateTime;
-    }
-
-    public String getAmount() {
+    public Integer getAmount() {
         return amount;
     }
 
-    public void setAmount(String amount) {
+    public void setAmount(Integer amount) {
         this.amount = amount;
     }
 
@@ -47,20 +37,12 @@ public class TransactionRequest {
         this.paid = paid;
     }
 
-    public String getRemaining() {
+    public Integer getRemaining() {
         return remaining;
     }
 
-    public void setRemaining(String remaining) {
+    public void setRemaining(Integer remaining) {
         this.remaining = remaining;
-    }
-
-    public String getLastUpdateTimeStamp() {
-        return lastUpdateTimeStamp;
-    }
-
-    public void setLastUpdateTimeStamp(String lastUpdateTimeStamp) {
-        this.lastUpdateTimeStamp = lastUpdateTimeStamp;
     }
 
     public boolean isDisableTxn() {
@@ -71,16 +53,49 @@ public class TransactionRequest {
         this.disableTxn = disableTxn;
     }
 
+    public String getTxnTimeStamp() {
+        return txnTimeStamp;
+    }
+
+    public void setTxnTimeStamp(String txnTimeStamp) {
+        this.txnTimeStamp = txnTimeStamp;
+    }
+
+    public boolean isPaid() {
+        return paid;
+    }
+
+    public void setPaid(boolean paid) {
+        this.paid = paid;
+    }
+
+    public String getLastUpdateTxnTimeStamp() {
+        return lastUpdateTxnTimeStamp;
+    }
+
+    public void setLastUpdateTxnTimeStamp(String lastUpdateTxnTimeStamp) {
+        this.lastUpdateTxnTimeStamp = lastUpdateTxnTimeStamp;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
     @Override
     public String toString() {
         return "TransactionRequest{" +
                 "id='" + id + '\'' +
-                ", transactionDateTime='" + transactionDateTime + '\'' +
-                ", amount='" + amount + '\'' +
+                ", txnTimeStamp='" + txnTimeStamp + '\'' +
+                ", amount=" + amount +
                 ", paid=" + paid +
-                ", remaining='" + remaining + '\'' +
-                ", lastUpdateTimeStamp='" + lastUpdateTimeStamp + '\'' +
+                ", remaining=" + remaining +
                 ", disableTxn=" + disableTxn +
+                ", note='" + note + '\'' +
+                ", lastUpdateTxnTimeStamp='" + lastUpdateTxnTimeStamp + '\'' +
                 '}';
     }
 }

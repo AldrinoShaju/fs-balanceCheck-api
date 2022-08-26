@@ -1,8 +1,7 @@
 package com.familyshop.microservice.balancecheck.service.impl;
 
+import com.familyshop.microservice.balancecheck.bean.CustomerRequest;
 import com.familyshop.microservice.balancecheck.bean.Customer;
-import com.familyshop.microservice.balancecheck.datatranslator.CustomerTransformation;
-import com.familyshop.microservice.balancecheck.dto.CustomerDTO;
 import com.familyshop.microservice.balancecheck.repository.BalanceCheckRepository;
 import com.familyshop.microservice.balancecheck.service.BalanceCheckCustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,61 +11,84 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.familyshop.microservice.balancecheck.datatranslator.CustomerTransformation.transformCustomerToDTO;
+
 @Service
 public class BalanceCheckCustomerServiceImpl implements BalanceCheckCustomerService {
 
     @Autowired
     BalanceCheckRepository repository;
 
-    public Customer getUserPaymentDetails(String id){
-        Optional<CustomerDTO> customerDTO = repository.findById(id);
-        if(customerDTO.isPresent()) {
-            return CustomerTransformation.transformDTOtoCustomer(customerDTO.get());
+    public Customer getUserPaymentDetails(String custId){
+        try {
+
+            Optional<Customer> customerDTO = repository.findById(custId);
+
+            if(customerDTO.isPresent()) {
+                return customerDTO.get();
+            }
+
+            throw new RuntimeException("No Customer found for id: "+custId);
+
+        }catch (Exception e){
+            throw e;
         }
-        return null;
     }
 
-    public void insertNewCustomer(Customer newCustomer){
-        CustomerDTO customerDTO = CustomerTransformation.transformCutomerToDTO(newCustomer);
+    public void insertNewCustomer(CustomerRequest customer){
+        Customer newCustomer = transformCustomerToDTO(customer);
         try{
-            repository.save(customerDTO);
-        }catch (RuntimeException e){
-            e.printStackTrace();
+            repository.save(newCustomer);
+        }catch (Exception e){
+            throw e;
         }
 
     }
 
     @Override
-    public List<CustomerDTO> fetchAllCustomers() {
-        List<CustomerDTO> customerList = repository.findAll();
+    public List<Customer> fetchAllCustomers() {
+        List<Customer> customerList = new ArrayList<>();
+        try {
+            customerList = repository.findAll();
+        }catch (Exception e){
+            throw e;
+        }
 
         return customerList;
     }
 
-    public boolean deleteCustomerFromDB(String custId){
+    public void deleteCustomerFromDB(String custId){
+
+        if(!repository.existsById(custId)){
+            throw new RuntimeException("Customer does not exist with id "+custId);
+        }
 
         try{
             repository.deleteById(custId);
         }catch (Exception e){
-            e.printStackTrace();
-            return false;
+            throw e;
         }
 
-        return true;
     }
 
     @Override
-    public void updateCustomerDetails(String custId, Customer updateCustomer) {
-        Optional<CustomerDTO> currentCustomer = repository.findById(custId);
-
-        if(!currentCustomer.isPresent()){
-            return;
+    public void updateCustomerDetails(String custId, CustomerRequest updateCustomer) {
+        Customer currentCust = new Customer();
+        try{
+            currentCust = getUserPaymentDetails(custId);
+        }catch (Exception e){
+            throw e;
         }
 
-        currentCustomer.get().setName(updateCustomer.getName());
-        currentCustomer.get().setPhoneNumber(updateCustomer.getPhoneNumber());
+        if(updateCustomer.getName()!=null){
+            currentCust.setName(updateCustomer.getName());
+        }
 
-        repository.save(currentCustomer.get());
+        if(updateCustomer.getPhoneNumber()!=null){
+            currentCust.setPhoneNumber(updateCustomer.getPhoneNumber());
+        }
+
+        repository.save(currentCust);
     }
 
 }
